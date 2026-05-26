@@ -58,7 +58,7 @@ export default function Navbar() {
           </nav>
 
           {/* Desktop CV */}
-          <a href="/MYCV.pdf" download="CV_Neng_Siti_Yuniasari.pdf"
+          <a href="/CV.pdf" download="CV_Neng_Siti_Yuniasari.pdf"
             className="hidden lg:inline-flex items-center gap-2 px-4 py-2 text-[13px] font-semibold bg-accent text-white rounded-xl hover:bg-accent-hover transition-colors shrink-0">
             <FileText className="w-3.5 h-3.5" />
             Download CV
@@ -89,7 +89,7 @@ export default function Navbar() {
               ))}
             </div>
             <div className="p-3 border-t border-line">
-              <a href="/MYCV.pdf" download="CV_Neng_Siti_Yuniasari.pdf"
+              <a href="/CV.pdf" download="CV_Neng_Siti_Yuniasari.pdf"
                 onClick={() => setOpen(false)}
                 className="flex items-center justify-center gap-2 w-full py-2.5 bg-accent text-white text-sm font-semibold rounded-xl hover:bg-accent-hover transition-colors">
                 <FileText className="w-4 h-4" />

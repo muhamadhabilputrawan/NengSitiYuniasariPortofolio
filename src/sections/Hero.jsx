@@ -50,7 +50,7 @@ const Hero = () => (
               Hubungi Saya
             </ScrollLink>
             <a
-              href="/MYCV.pdf"
+              href="/CV.pdf"
               download="CV_Neng_Siti_Yuniasari.pdf"
               className="flex items-center gap-2 px-5 py-2.5 border-2 border-line text-ink text-sm font-semibold rounded-xl hover:border-accent hover:text-accent transition-colors"
             >
