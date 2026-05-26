@@ -1,0 +1,84 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap');
+@import "tailwindcss";
+
+@theme {
+  /* ── Accent — coklat moka hangat selaras foto profil ── */
+  --color-accent:        #7C6354;
+  --color-accent-hover:  #6A5347;
+  --color-accent-muted:  #F5EDE8;
+  --color-accent-ring:   #D9C4BA;
+
+  /* ── Teks ── */
+  --color-ink:           #1C1917;
+  --color-ink-2:         #292524;
+  --color-body:          #44403C;
+  --color-muted:         #78716C;
+  --color-subtle:        #A8A29E;
+
+  /* ── Surface — krem hangat ── */
+  --color-canvas:        #FDFAF7;
+  --color-surface:       #FFFFFF;
+  --color-surface-2:     #F5EDE8;
+  --color-surface-3:     #EDE0D8;
+
+  /* ── Border ── */
+  --color-line:          #E7DDD8;
+  --color-line-2:        #D6C8C0;
+
+  /* ── Dark panel ── */
+  --color-dark-panel:    #2C1F1A;
+  --color-dark-text:     #FAF7F4;
+
+  --font-sans:  'Plus Jakarta Sans', system-ui, sans-serif;
+  --font-serif: 'Lora', Georgia, serif;
+  --font-mono:  'Fira Code', monospace;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    @apply bg-canvas text-body font-sans;
+  }
+  body { @apply overflow-x-hidden; }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply text-ink font-semibold;
+    font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+  }
+
+  ::selection {
+    background: #0D737720;
+    color: #0A5C60;
+  }
+}
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #D6CEC4; border-radius: 99px; }
+::-webkit-scrollbar-thumb:hover { background: #A8A29E; }
+
+/* ── Shimmer skeleton ── */
+@keyframes shimmer {
+  0%   { background-position: -400px 0; }
+  100% { background-position: 400px 0; }
+}
+.shimmer {
+  background: linear-gradient(90deg, #F5F0EB 25%, #EDE8E3 50%, #F5F0EB 75%);
+  background-size: 400px 100%;
+  animation: shimmer 1.4s ease-in-out infinite;
+}
+
+/* ── Fade-in utility ── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.fade-up { animation: fadeUp 0.5s ease forwards; }
+
+/* ── Texture overlay ── */
+.texture-bg {
+  background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23000000' fill-opacity='0.02'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+}
