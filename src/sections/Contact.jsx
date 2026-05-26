@@ -1,55 +1,73 @@
 import { useState } from 'react';
-import { Mail, Phone, Send, CheckCircle, User } from 'lucide-react';
+import { Mail, Phone, Send, CheckCircle, User, AlertCircle } from 'lucide-react';
 import LinkedinIcon from '../components/LinkedinIcon';
 
 const CONTACTS = [
   {
-    href: 'mailto:sitiyuniasari247@gmail.com',
+    href: null,
     label: 'Email',
     value: 'sitiyuniasari247@gmail.com',
     icon: <Mail className="w-5 h-5" />,
-    external: false,
   },
   {
     href: 'https://wa.me/6287834016813',
     label: 'WhatsApp',
     value: '0878-3401-6813',
     icon: <Phone className="w-5 h-5" />,
-    external: true,
   },
   {
     href: 'https://www.linkedin.com/in/nengsitiyuniasari',
     label: 'LinkedIn',
     value: 'linkedin.com/in/nengsitiyuniasari',
     icon: <LinkedinIcon className="w-5 h-5" />,
-    external: true,
   },
   {
     href: 'https://www.instagram.com/yusshine_/',
     label: 'Instagram',
     value: '@yusshine_',
     icon: <User className="w-5 h-5" />,
-    external: true,
   },
 ];
 
 export default function Contact() {
   const [form, setForm] = useState({ name: '', email: '', message: '' });
-  const [submitted, setSubmitted] = useState(false);
-  const [submitting, setSubmitting] = useState(false);
+  const [status, setStatus] = useState('idle'); // idle | submitting | success | error
 
   const handleChange = (e) => setForm((p) => ({ ...p, [e.target.name]: e.target.value }));
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!form.name || !form.email || !form.message) return;
-    setSubmitting(true);
-    setTimeout(() => {
-      setSubmitting(false);
-      setSubmitted(true);
-      setForm({ name: '', email: '', message: '' });
-      setTimeout(() => setSubmitted(false), 5000);
-    }, 1400);
+
+    setStatus('submitting');
+
+    try {
+      const res = await fetch('https://api.web3forms.com/submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify({
+          access_key: import.meta.env.VITE_WEB3FORMS_KEY,
+          name: form.name,
+          email: form.email,
+          message: form.message,
+          subject: `Pesan dari ${form.name} — Portfolio Siti Yuniasari`,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (data.success) {
+        setStatus('success');
+        setForm({ name: '', email: '', message: '' });
+        setTimeout(() => setStatus('idle'), 6000);
+      } else {
+        setStatus('error');
+        setTimeout(() => setStatus('idle'), 5000);
+      }
+    } catch {
+      setStatus('error');
+      setTimeout(() => setStatus('idle'), 5000);
+    }
   };
 
   return (
@@ -71,23 +89,31 @@ export default function Contact() {
               Hubungi saya melalui salah satu kanal berikut.
             </p>
 
-            {CONTACTS.map(({ href, label, value, icon, external }) => (
-              <a
-                key={label}
-                href={href}
-                target={external ? '_blank' : undefined}
-                rel="noreferrer"
-                className="flex items-center gap-4 p-4 bg-canvas rounded-2xl border border-line hover:border-accent hover:bg-accent-muted transition-all group"
-              >
-                <div className="w-11 h-11 rounded-xl bg-surface-2 flex items-center justify-center text-muted group-hover:bg-accent group-hover:text-white transition-all shrink-0">
-                  {icon}
+            {CONTACTS.map(({ href, label, value, icon }) => {
+              const baseClass = "flex items-center gap-4 p-4 bg-canvas rounded-2xl border border-line transition-all group";
+              const inner = (
+                <>
+                  <div className="w-11 h-11 rounded-xl bg-surface-2 flex items-center justify-center text-muted group-hover:bg-accent group-hover:text-white transition-all shrink-0">
+                    {icon}
+                  </div>
+                  <div className="overflow-hidden">
+                    <p className="text-[10px] font-semibold text-subtle uppercase tracking-wider">{label}</p>
+                    <p className="text-sm font-medium text-ink group-hover:text-accent truncate transition-colors">{value}</p>
+                  </div>
+                </>
+              );
+
+              return href ? (
+                <a key={label} href={href} target="_blank" rel="noreferrer"
+                  className={`${baseClass} hover:border-accent hover:bg-accent-muted cursor-pointer`}>
+                  {inner}
+                </a>
+              ) : (
+                <div key={label} className={`${baseClass} cursor-default select-text`}>
+                  {inner}
                 </div>
-                <div className="overflow-hidden">
-                  <p className="text-[10px] font-semibold text-subtle uppercase tracking-wider">{label}</p>
-                  <p className="text-sm font-medium text-ink group-hover:text-accent truncate transition-colors">{value}</p>
-                </div>
-              </a>
-            ))}
+              );
+            })}
 
             <div className="mt-4 p-6 bg-dark-panel rounded-2xl">
               <p className="text-xs font-semibold text-accent uppercase tracking-wider mb-3">Etos Kerja</p>
@@ -134,21 +160,32 @@ export default function Contact() {
                 />
               </div>
 
-              <div className="flex items-center justify-between pt-2 border-t border-line">
-                {submitted ? (
-                  <span className="flex items-center gap-2 text-sm font-medium text-emerald-600">
-                    <CheckCircle className="w-4 h-4" />
-                    Pesan berhasil dikirim!
-                  </span>
-                ) : (
-                  <span className="text-xs text-subtle">Semua kolom wajib diisi.</span>
-                )}
+              <div className="flex items-center justify-between pt-2 border-t border-line gap-4">
+                {/* Status feedback */}
+                <div className="text-sm">
+                  {status === 'success' && (
+                    <span className="flex items-center gap-2 font-medium text-emerald-600">
+                      <CheckCircle className="w-4 h-4 shrink-0" />
+                      Pesan terkirim! Terima kasih.
+                    </span>
+                  )}
+                  {status === 'error' && (
+                    <span className="flex items-center gap-2 font-medium text-red-500">
+                      <AlertCircle className="w-4 h-4 shrink-0" />
+                      Gagal mengirim. Coba lagi.
+                    </span>
+                  )}
+                  {(status === 'idle' || status === 'submitting') && (
+                    <span className="text-xs text-subtle">Semua kolom wajib diisi.</span>
+                  )}
+                </div>
+
                 <button
                   type="submit"
-                  disabled={submitting || submitted}
-                  className="inline-flex items-center gap-2 px-6 py-3 bg-accent text-white text-sm font-semibold rounded-xl hover:bg-accent-hover transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  disabled={status === 'submitting' || status === 'success'}
+                  className="inline-flex items-center gap-2 px-6 py-3 bg-accent text-white text-sm font-semibold rounded-xl hover:bg-accent-hover transition-colors disabled:opacity-50 disabled:cursor-not-allowed shrink-0"
                 >
-                  {submitting ? (
+                  {status === 'submitting' ? (
                     <>
                       <span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />
                       <span>Mengirim...</span>
